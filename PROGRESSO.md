@@ -31,13 +31,13 @@
 
 ## Pendências
 ### Segurança e estabilidade
-- [ ] Snapshot de todas as VMs (v2.3-onboarding-splunk).
+- [X] Snapshot de todas as VMs (v2.3-onboarding-splunk).
 - [ ] ufw no Ubuntu (22, 8000, 9997/tcp, 5140/udp).
 - [ ] Desativar a Anti-Lockout Rule da CLIENTS.
-- [ ] Desativar hibernação do WIN10 via GPO.
+- [X] Desativar hibernação do WIN10 via GPO.
 
 ### Splunk
-- [ ] Medir ruído do Sysmon em regime normal.
+- [X] Medir ruído do Sysmon em regime normal.
 - [ ] Add-on de parsing do pfSense.
 - [ ] Ajustar host do pfSense (aparece como 10.0.2.1).
 - [ ] Verificar e remover o index antigo "pfsense".
@@ -51,6 +51,6 @@
 
 ### Higiene
 - [ ] Desabilitar a conta teste_sysmon.
-- [ ] Limpar arquivos acidentais na pasta do Administrator do DC (ipconfig, IPv4, Subnet...).
-- [ ] Trocar a senha padrão do admin do pfSense.
-- [ ] Fixar o IP da WAN do pfSense (DHCP static mapping do VMware).
+- [X] Limpar arquivos acidentais na pasta do Administrator do DC (ipconfig, IPv4, Subnet...).
+- [X] Trocar a senha padrão do admin do pfSense.
+- [X] Fixar o IP da WAN do pfSense (DHCP static mapping do VMware).
