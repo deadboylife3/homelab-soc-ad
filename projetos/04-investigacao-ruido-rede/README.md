@@ -29,7 +29,7 @@ Get-NetUDPEndpoint -LocalPort 12345 |
 ```text
 LocalAddress  LocalPort OwningProcess Processo
 192.168.252.1     12345         13952 C:\Users\<usuario>\AppData\Local\VortxEngine\app-2.5.74\Signal-x64\SignalRgb.exe
-192.168.15.7      12345         13952 ...\SignalRgb.exe
+192.168.x.x       12345         13952 ...\SignalRgb.exe
 0.0.0.0           12345         13952 ...\SignalRgb.exe
 ```
 
@@ -169,6 +169,8 @@ index=pfsense_logs NOT "255.255.255.255" earliest=-10m
 Resultado: 66 eventos em 10 minutos, o mais recente segundos antes da busca. O silêncio era da regra, não de uma falha na coleta.
 
 ![Linha do tempo completa do broadcast](img/04-01-broadcast-timeline.png)
+
+Leitura do gráfico (colunas de 10 minutos): ~80 eventos com as três portas registradas, ~20 depois da primeira regra (só 1982 e 5555) e zero depois do alias. Os vazios por volta de 01:20 e a partir de ~02:00 são períodos com o **laboratório desligado**, por isso não servem, sozinhos, como prova da correção: quem comprova o silêncio é o teste de controle acima.
 
 ## Resultado
 
