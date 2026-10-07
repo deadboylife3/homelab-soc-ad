@@ -139,8 +139,6 @@ Get-NetFirewallProfile -PolicyStore ActiveStore | Format-Table Name, Enabled, Lo
 (UNKNOWN) [10.0.1.101] 445 (microsoft-ds) open
 ```
 
-![nc open](img/02-05-nc-open.png)
-![Captura depois: resposta do WIN10](img/02-06-capture-depois.png)
 
 ## Resultado
 
