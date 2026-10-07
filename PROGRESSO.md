@@ -28,16 +28,20 @@
 - [x] CORREÇÃO: NAT 2223 (SSH DC01) estava com source "*". Restrito a HOST_ANALISTA.
 - [x] CORREÇÃO: sshd do DC01 estava em Manual. Ajustado para Automatic.
 - [x] NAT 2222 e 8000 confirmados restritos a HOST_ANALISTA.
+- [x] Repositório homelab-soc-ad publicado: README, arquitetura, diagrama da topologia v2 e projetos 00-04.
+- [x] Histórico do Git reescrito para remover e-mail pessoal dos metadados (commits com noreply).
+- [x] 14 prints recuperados e sanitizados (usuário mascarado, barras de endereço e tarefas recortadas).
 
 ## Pendências
 ### Segurança e estabilidade
-- [X] Snapshot de todas as VMs (v2.3-onboarding-splunk).
+- [x] Snapshot de todas as VMs (v2.3-onboarding-splunk).
 - [ ] ufw no Ubuntu (22, 8000, 9997/tcp, 5140/udp).
 - [ ] Desativar a Anti-Lockout Rule da CLIENTS.
-- [X] Desativar hibernação do WIN10 via GPO.
+- [x] Hibernação desativada no WIN10 (local, pelo Painel de Controle).
+- [ ] Aplicar a política de energia via GPO na OU Workstations (padronizar para futuros endpoints).
 
 ### Splunk
-- [X] Medir ruído do Sysmon em regime normal.
+- [ ] Medir ruído do Sysmon em regime normal.
 - [ ] Add-on de parsing do pfSense.
 - [ ] Ajustar host do pfSense (aparece como 10.0.2.1).
 - [ ] Verificar e remover o index antigo "pfsense".
@@ -51,6 +55,6 @@
 
 ### Higiene
 - [ ] Desabilitar a conta teste_sysmon.
-- [X] Limpar arquivos acidentais na pasta do Administrator do DC (ipconfig, IPv4, Subnet...).
-- [X] Trocar a senha padrão do admin do pfSense.
-- [X] Fixar o IP da WAN do pfSense (DHCP static mapping do VMware).
+- [ ] Limpar arquivos acidentais na pasta do Administrator do DC (ipconfig, IPv4, Subnet...).
+- [x] Trocar a senha padrão do admin do pfSense.
+- [ ] Fixar o IP da WAN do pfSense (DHCP static mapping do VMware).
