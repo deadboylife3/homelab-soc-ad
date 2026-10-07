@@ -40,6 +40,10 @@ Antes desta etapa, o Kali estava na VMnet8 (mesma rede da WAN do pfSense) e cons
 
 ### Rede CLIENTS: remoção das regras permissivas
 
+Estado antes da mudança:
+
+![Regras CLIENTS antes](img/01-07-regras-clients-antes.png)
+
 Análise das regras existentes revelou dois problemas:
 
 | Regra | Problema |

@@ -25,6 +25,9 @@ Reorganizar a coleta de logs do Splunk: tirar os dados do index padrão, padroni
 | main | WinEventLog | CLI-TI-01 | Security/System/Application no index padrão, formato clássico |
 | pfsense_logs | pfsense | 10.0.2.1 | OK |
 
+![Inventário antes](img/03-06-inventario-antes.png)
+![Sources antes](img/03-07-inventario-sources-antes.png)
+
 Achados:
 - **Não havia duplicação**, e sim **inconsistência**: Sysmon em XML, os demais canais em formato clássico.
 - Dados Windows no `main` (sem retenção ou permissões próprias).
@@ -129,6 +132,8 @@ index=sysmon earliest=-1h
 | Splunk UF | 50 |
 | Resto | 26 |
 
+![Medição do ruído](img/03-08-sysmon-ruido.png)
+
 Cerca de 66% do Sysmon era o próprio forwarder. Detalhando:
 
 ```spl
@@ -136,6 +141,8 @@ index=sysmon earliest=-1h
 | where like(Image, "%SplunkUniversalForwarder%")
 | stats count by Image, EventCode
 ```
+
+![Ruído por processo](img/03-09-sysmon-ruido-processos.png)
 
 - **100% era EventCode 1** (criação de processo).
 - `btool.exe` e `splunk.exe` = a **minha própria administração** durante a sessão.
@@ -155,6 +162,8 @@ index=sysmon `sysmon_sem_uf` EventCode=1
 ```
 
 Validação: a macro retornou 26 eventos, exatamente o "Resto" da medição.
+
+![Resultado da macro](img/03-10-macro-resultado.png)
 
 ![Macro](img/03-04-macro-sysmon.png)
 

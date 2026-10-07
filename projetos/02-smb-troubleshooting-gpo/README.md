@@ -51,6 +51,8 @@ Descobri que o WIN10 estava **hibernando** durante o teste. Isso invalidava a co
 23:09:25.332344 IP 10.0.3.100.52918 > 10.0.1.101.445: tcp 0
 ```
 
+![Captura antes: só SYN, sem resposta](img/02-09-capture-antes.png)
+
 Mesmo resultado, agora com o host acordado e o perfil de firewall confirmado:
 
 ```text

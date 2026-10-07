@@ -85,8 +85,6 @@ As redes internas **não têm adaptador no HOST**, que fica fora do laboratório
 
 O ping funcionando descartou problema de rota e de firewall.
 
-![nslookup com timeout](img/00-05-win10-nslookup.png)
-
 ### Diagnóstico
 
 1. `ping` ao DC OK → rede e regras do pfSense corretas.
@@ -94,15 +92,13 @@ O ping funcionando descartou problema de rota e de firewall.
 3. O pfSense já entregava `10.0.2.10` por DHCP, então o valor antigo estava **fixado manualmente** na placa.
 4. Com o DNS apontando para um IP que não existe mais, o cliente não localizava o DC (registros SRV) nem validava o canal seguro.
 
-![ipconfig /all com DNS errado](img/00-07-win10-ipconfig.png)
-
 ### Correção
 
 **Temporária** (sem acesso administrativo ao cliente, já que as credenciais de domínio não funcionavam): port forward na interface CLIENTS do pfSense, redirecionando DNS (TCP/UDP 53) de `192.168.252.10` para `10.0.2.10`.
 
 Resultado: `nslookup meulab.local` resolveu e `nltest /dsgetdc:meulab.local` listou o DC01.
 
-![nltest após o remendo](img/00-06-win10-nltest.png)
+![nltest localizando o DC01](img/00-06-win10-nltest.png)
 
 **Definitiva:** com o domínio acessível, uma conta administrativa passou a ser aceita e o DNS voltou ao automático:
 
@@ -123,7 +119,7 @@ nltest /sc_verify:meulab.local   -> NERR_Success (canal seguro saudável)
 ```
 
 ![Canal seguro verificado](img/00-08-win10-sc-verify.png)
-![Estado final sem remendo](img/00-09-win10-sem-remendo.png)
+![DNS final via DHCP apontando para o DC](img/00-09-win10-sem-remendo.png)
 
 ---
 
@@ -146,13 +142,4 @@ nltest /sc_verify:meulab.local   -> NERR_Success (canal seguro saudável)
 - Um único DC, sem redundância.
 - Inventário de contas administrativas locais ainda não formalizado (senhas a guardar em gerenciador).
 
-<!--
-Mapeamento sugerido dos prints antigos (numeração 10-22 da sessão de 04/10):
-10 -> 00-01 dashboard pfSense v2
-11 -> 00-02 DC ipconfig | 12 -> 00-03 DC ping | 13 -> 00-04 DC nslookup
-14 -> 00-05 WIN10 nslookup | 15 -> 00-06 WIN10 nltest | 16 -> 00-07 WIN10 ipconfig
-17 -> 00-08 sc_verify | 18 -> 00-09 sem remendo
-19 -> 00-10 Splunk ip/ping | 20 -> 00-11 HOST Test-NetConnection
-21 -> 00-12 Splunk WIN10 | 22 -> 00-13 Splunk pfSense
-Confira a ordem real antes de renomear.
--->
+> Os prints do estado com problema (nslookup com timeout e DNS fixo no IP antigo) não foram preservados; as saídas estão descritas em texto acima.

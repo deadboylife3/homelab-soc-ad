@@ -59,7 +59,11 @@ Veredito: **benigno**, com base no conjunto (assinatura EV válida + comportamen
 
 Regra de bloqueio **sem log** no topo da WAN, específica para o fluxo. A regra foi criada como **TCP** por engano, e nunca casaria com um broadcast UDP. O erro foi percebido revisando a coluna Protocol na lista de regras.
 
+![Regra criada como TCP por engano](img/04-06-regra-tcp-erro.png)
+
 Na mesma revisão, outro achado: a regra NAT do **SSH do DC** estava com origem `*` (qualquer máquina na WAN), não restrita à estação do analista. Corrigida para o alias `HOST_ANALISTA`.
+
+![NAT do SSH do DC com origem Any](img/04-07-nat-dc-origem-any.png)
 
 ### 4. O volume caiu, mas não zerou
 
@@ -85,6 +89,8 @@ index=pfsense_logs "255.255.255.255" earliest=-30m
 
 `minutos_atras = 0.0` → ainda chegavam eventos.
 
+![Último evento](img/04-08-ultimo-evento.png)
+
 ### 5. Decodificando o filterlog
 
 ```text
@@ -101,6 +107,8 @@ filterlog: 1,6,,1000000103,em0,match,block,in,4,0x0,,128,32816,0,none,17,udp,114
 | origem → destino | `192.168.252.1 → 255.255.255.255` | HOST, broadcast |
 | portas | `1982 → 1982` e `5555 → 5555` | **Outros fluxos**, 1x por minuto |
 
+![Eventos filterlog brutos](img/04-09-filterlog.png)
+
 A busca por texto misturava fluxos distintos. A porta 12345 já estava silenciada; restavam 1982 e 5555. Mesmo método, mesma conclusão:
 
 ```text
@@ -108,6 +116,8 @@ LocalAddress  LocalPort OwningProcess Processo
 192.168.252.1      5555         13952 ...\SignalRgb.exe
 192.168.252.1      1982         13952 ...\SignalRgb.exe
 ```
+
+![Portas 1982 e 5555](img/04-10-udp-1982-5555.png)
 
 ## Correção final
 
