@@ -22,7 +22,6 @@ Antes desta etapa, o Kali estava na VMnet8 (mesma rede da WAN do pfSense) e cons
 - Host-only, **sem adaptador virtual do HOST**, sem DHCP do VMware.
 - DHCP do pfSense (10.0.3.100–150), DNS = 10.0.3.1.
 
-![VMnet4 sem adaptador do host](img/01-01-vnet-editor-vmnet4.png)
 
 ### Regras da interface ATTACKER (ordem de avaliação: de cima para baixo, primeira que casa vence)
 
@@ -96,10 +95,15 @@ HTTP/2 200
 
 ### Evidência no SIEM
 
+Logo após os testes, os bloqueios do Kali consultados no Splunk, com os campos extraídos do filterlog na própria busca:
+
 ```spl
-index=pfsense_logs "10.0.3.100" block earliest=-15m
-| table _time _raw
+index=pfsense_logs "10.0.3.100" "block" earliest=-15m
+| rex "(?<proto>tcp|udp|icmp),\d+,(?<src>[\d\.]+),(?<dst>[\d\.]+)"
+| stats count latest(_time) as ultimo by src, dst, proto
 ```
+
+Os três destinos proibidos aparecem como bloqueados (ICMP para `10.0.2.20`, `192.168.252.1` e `8.8.8.8`). Além deles, a busca revelou algo que não estava no teste: **tentativas UDP do Kali para vários servidores externos**, que também caíram no bloqueio final. Pelos endereços, parecem ser servidores de horário (NTP, porta 123), já que a regra de internet da rede ATTACKER libera apenas 80 e 443. A confirmar pela porta de destino. Efeito colateral a acompanhar: sem NTP, o relógio do Kali pode se desviar, o que atrapalha a correlação de horários entre fontes.
 
 ![Bloqueios do Kali no Splunk](img/01-06-splunk-bloqueios-kali.png)
 
