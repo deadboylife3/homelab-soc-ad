@@ -58,6 +58,41 @@ DC01 ── (planejado) Universal Forwarder ────────────
 
 Critério: **separar por retenção e por quem acessa**, não por tipo de log. Poucos indexes, cada um com motivo. Detalhes no [projeto 03](../projetos/03-onboarding-splunk/).
 
+## Hardware e alocação de recursos
+
+Todo o laboratório roda em um único PC, que também é a estação do analista.
+
+| Componente | Especificação |
+|---|---|
+| CPU | AMD Ryzen 7 5800X3D (8 núcleos / 16 threads) |
+| RAM | 32 GB |
+| Armazenamento | SSD NVMe 2 TB |
+| GPU | AMD Radeon RX 7600 (não utilizada pelo lab) |
+| Virtualização | VMware Workstation |
+
+### Alocação por VM
+
+| VM | Função | RAM | vCPU | Disco | Rede(s) |
+|---|---|---|---|---|---|
+| pfSense | Firewall / gateway | 2 GB | 2 | 20 GB | VMnet8, 2, 3, 4 |
+| Windows Server 2022 (DC01) | AD DS + DNS | 4 GB | 2 | 60 GB | VMnet3 |
+| Ubuntu Server | Splunk Enterprise | 6 GB | 4 | 80 GB | VMnet3 |
+| Windows 10 (CLI-TI-01) | Endpoint | 6 GB | 4 | 60 GB | VMnet2 |
+| Kali Linux | Atacante | 2 GB | 2 | 80 GB | VMnet4 |
+| **Total** | | **~20 GB** | **14** | **300 GB** | |
+
+### Planejamento de capacidade
+
+- **Memória é o recurso limitante.** Com as 5 VMs ligadas, sobram cerca de 12 GB para o Windows 11 HOST (navegador com o Splunk Web, ferramentas de análise).
+- **vCPU:** 14 vCPUs alocadas para 16 threads físicas. Não há sobrealocação, e como as VMs raramente usam CPU ao mesmo tempo, o HOST continua responsivo.
+- **Splunk** é a VM que mais cresce com o volume de dados (indexação e buscas). Próximo ajuste: 8 GB, ainda deixando ~10 GB livres para o HOST.
+- **Disco:** os 300 GB alocados são o limite máximo dos discos virtuais; o espaço real ocupado é menor, porque os discos crescem conforme o uso.
+- Nem todas as VMs precisam estar ligadas sempre: o Kali só é ligado durante simulações de ataque.
+
+<!-- Foto do PC (opcional): salve como docs/img/pc-host.jpg, remova os metadados e descomente a linha abaixo.
+![PC que hospeda o laboratório](img/pc-host.jpg)
+-->
+
 ## Divisão de responsabilidades
 
 | Camada | Ferramenta |
