@@ -32,6 +32,12 @@
 - [x] Histórico do Git reescrito para remover e-mail pessoal dos metadados (commits com noreply).
 - [x] 14 prints recuperados e sanitizados (usuário mascarado, barras de endereço e tarefas recortadas).
 
+## Sessão 07/10/2026 — Validação do broadcast
+- [x] Gráfico de 5 em 5 min revelou ~10 eventos/5 min persistentes (portas 1982 e 5555) após a "correção".
+- [x] Causa: alias BROADCAST_HOST criado, mas a regra ainda usava só a porta 12345. Regra ajustada.
+- [x] Validado: último evento às 01:42:44 + teste de controle (outros logs do pfSense chegando normalmente).
+- Lição: criar o objeto (alias) não basta, ele precisa ser referenciado na regra. Validar sempre pelo SIEM.
+
 ## Pendências
 ### Segurança e estabilidade
 - [x] Snapshot de todas as VMs (v2.3-onboarding-splunk).

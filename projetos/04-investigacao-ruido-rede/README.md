@@ -119,7 +119,7 @@ LocalAddress  LocalPort OwningProcess Processo
 
 ![Portas 1982 e 5555](img/04-10-udp-1982-5555.png)
 
-## Correção final
+## Correção com alias
 
 Alias de portas, mantendo a exclusão **estreita e documentada**:
 
@@ -127,22 +127,52 @@ Alias de portas, mantendo a exclusão **estreita e documentada**:
 |---|---|---|
 | `BROADCAST_HOST` | 12345, 1982, 5555 | Portas de descoberta do SignalRGB no HOST |
 
-| Regra (topo da WAN) | Valor |
+![Alias](img/04-04-alias-broadcast.png)
+
+Por que não silenciar todas as portas desse broadcast? Porque uma quarta porta desconhecida **deve gerar log** e ser investigada.
+
+### 6. A correção não tinha sido aplicada de verdade
+
+Ao montar o gráfico final, de 5 em 5 minutos, o volume não chegou a zero: caiu de ~40 para **~10 eventos a cada 5 minutos**, e ficou assim por horas.
+
+![Correção parcial: patamar de ~10 eventos](img/04-11-broadcast-parcial.png)
+
+Dez eventos por janela correspondem exatamente aos dois fluxos de uma vez por minuto (1982 e 5555). Extraindo os campos do filterlog na própria busca:
+
+```spl
+index=pfsense_logs "255.255.255.255" earliest=-15m
+| rex "udp,\d+,(?<src>[\d\.]+),(?<dst>[\d\.]+),(?<sport>\d+),(?<dport>\d+)"
+| stats count by src, dst, dport
+```
+
+Os eventos ainda caíam no tracker `1000000103` (bloqueio padrão). **Causa:** o alias `BROADCAST_HOST` existia, mas a regra continuava apontando só para a porta `12345`. Criar o objeto não basta: ele precisa ser referenciado na regra.
+
+| Regra final (topo da WAN) | Valor |
 |---|---|
 | Ação | Block, **sem log** |
 | Protocolo | UDP |
 | Origem | 192.168.252.1 |
 | Destino | 255.255.255.255 : `BROADCAST_HOST` |
 
-Por que não silenciar todas as portas desse broadcast? Porque uma quarta porta desconhecida **deve gerar log** e ser investigada.
-
-![Alias](img/04-04-alias-broadcast.png)
 ![Regras WAN](img/04-05-regras-wan.png)
-![Linha do tempo do broadcast](img/04-01-broadcast-timeline.png)
+
+### 7. Validação com teste de controle
+
+1. **Último evento do broadcast:** parou às 01:42:44, minuto em que a regra foi aplicada, e o tempo desde o último evento passou a crescer.
+2. **Controle:** um zero só prova algo se o pipeline estiver vivo. No mesmo período, o pfSense continuou enviando outros logs normalmente:
+
+```spl
+index=pfsense_logs NOT "255.255.255.255" earliest=-10m
+| stats count latest(_time) as ultimo
+```
+
+Resultado: 66 eventos em 10 minutos, o mais recente segundos antes da busca. O silêncio era da regra, não de uma falha na coleta.
+
+![Linha do tempo completa do broadcast](img/04-01-broadcast-timeline.png)
 
 ## Resultado
 
-- Ruído de ~40 eventos a cada 5 minutos removido dos logs do firewall.
+- Ruído de ~40 eventos a cada 5 minutos removido dos logs do firewall, em duas etapas (a segunda revelada pelo próprio SIEM).
 - Todos os demais bloqueios da WAN continuam registrados.
 - Achado de segurança paralelo corrigido (SSH do DC exposto a qualquer origem na WAN).
 
@@ -151,6 +181,8 @@ Por que não silenciar todas as portas desse broadcast? Porque uma quarta porta 
 - **Hipóteses sobre "tráfego conhecido" precisam ser verificadas.** A atribuição ao VMware estava errada.
 - Mapear porta → PID → executável → assinatura é o caminho padrão para atribuir tráfego a um processo.
 - Revisar a regra **na lista** (não só no formulário) pega erros como TCP/UDP trocado.
+- Criar um alias não muda nada até ele ser usado em uma regra.
+- Validar a correção **pelo SIEM**, com teste de controle, em vez de presumir que funcionou.
 - "Último evento visto" é mais confiável que contagem por janela para confirmar que algo parou.
 - Busca por texto livre pode misturar fluxos; o parsing dos campos evita isso (motivo para instalar o add-on do pfSense).
 - Um zero no gráfico pode significar "nada aconteceu" ou "nada estava sendo registrado" (lab desligado).
