@@ -10,28 +10,6 @@ O objetivo final é investigar incidentes observando várias camadas ao mesmo te
 
 ## Arquitetura
 
-```
-                         ┌──────────────────────────────┐
-                         │  Windows 11 HOST (analista)  │
-                         │  Splunk Web · SSH · pfSense  │
-                         └──────────────┬───────────────┘
-                                        │ VMnet8 (WAN 192.168.252.0/24)
-                              ┌─────────┴─────────┐
-                              │      pfSense      │  firewall / gateway / NAT
-                              └──┬───────┬──────┬─┘
-                 CLIENTS         │       │      │        ATTACKER
-              10.0.1.0/24 ───────┘       │      └─────── 10.0.3.0/24
-              ┌────────────┐             │             ┌────────────┐
-              │ WIN10      │             │             │ Kali Linux │
-              │ CLI-TI-01  │      SERVERS 10.0.2.0/24  │ 10.0.3.100 │
-              │ Sysmon, UF │     ┌───────┴────────┐    └────────────┘
-              └────────────┘     │                │
-                          ┌──────┴─────┐   ┌──────┴──────┐
-                          │ DC01       │   │ Ubuntu      │
-                          │ AD DS, DNS │   │ Splunk Ent. │
-                          │ 10.0.2.10  │   │ 10.0.2.20   │
-                          └────────────┘   └─────────────┘
-```
 
 ![Topologia v2](docs/img/topologia-v2.png)
 
