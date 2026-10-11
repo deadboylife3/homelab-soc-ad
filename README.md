@@ -23,7 +23,7 @@ Detalhes em [docs/arquitetura.md](docs/arquitetura.md).
 | Windows 10 (CLI-TI-01) | Endpoint monitorado / vítima | Endpoint |
 | Sysmon | Telemetria detalhada de processos, rede e registro | Telemetria de endpoint |
 | Microsoft Defender | Antivírus | AV |
-| LimaCharlie *(planejado)* | Detecção e resposta no endpoint | EDR |
+| LimaCharlie *(instalado no WIN10)* | Detecção e resposta no endpoint | EDR |
 | Ubuntu Server + Splunk Enterprise | Coleta, indexação, busca e correlação | SIEM |
 | Splunk Universal Forwarder | Envio dos logs Windows ao Splunk | Coleta |
 | Kali Linux | Origem de ataques simulados, em rede isolada | Atacante |
@@ -39,6 +39,7 @@ Detalhes em [docs/arquitetura.md](docs/arquitetura.md).
 | 02 | [Do timeout à GPO: diagnóstico de SMB entre segmentos](projetos/02-smb-troubleshooting-gpo/) | Packet capture, troubleshooting por camadas, OUs, GPO por PowerShell |
 | 03 | [Onboarding de dados no Splunk](projetos/03-onboarding-splunk/) | index/sourcetype, Universal Forwarder, btool, canary event, macros |
 | 04 | [Investigação de ruído de rede: hipótese errada, causa real](projetos/04-investigacao-ruido-rede/) | Análise de filterlog, mapeamento porta→processo, assinatura de código |
+| 05 | [Camada de identidade: forwarder no DC e o ponto cego da auditoria](projetos/05-identidade-dc-auditoria/) | Universal Forwarder no DC, auditoria avançada por GPO, correlação 4625/4771 e 4624/4768 |
 
 Os projetos 02 e 04 registram **hipóteses que se mostraram erradas** e como os dados levaram à conclusão correta. Isso é intencional: mostra o processo de investigação, não só o resultado.
 
@@ -50,9 +51,9 @@ Splunk Enterprise · Splunk Universal Forwarder · SPL · pfSense · Active Dire
 
 ## Próximos passos
 
-- Universal Forwarder no DC01 (camada de identidade: 4624, 4625, 4768, 4769, 4720) e auditoria avançada
 - Coleta do Microsoft Defender e do log do Windows Firewall
-- LimaCharlie (EDR) no WIN10 e integração com o Splunk
+- Integração do LimaCharlie (EDR) com o Splunk
+- Política de bloqueio de conta e alerta de falhas de logon no Splunk
 - Add-on de parsing do pfSense (src_ip, dest_ip, action)
 - Cenários de ataque controlados com detecções documentadas (MITRE ATT&CK)
 
